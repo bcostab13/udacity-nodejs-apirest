@@ -11,16 +11,19 @@ import * as EmailValidator from 'email-validator';
 const router: Router = Router();
 
 async function generatePassword(plainTextPassword: string): Promise<string> {
-    //@TODO Use Bcrypt to Generated Salted Hashed Passwords
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hash = bcrypt.hash(plainTextPassword, salt);
+    return hash;
 }
 
 async function comparePasswords(plainTextPassword: string, hash: string): Promise<boolean> {
-    //@TODO Use Bcrypt to Compare your password to your Salted Hashed Password
+    return bcrypt.compare(plainTextPassword, hash);    
 }
 
-function generateJWT(user: User): string {
+//function generateJWT(user: User): string {
     //@TODO Use jwt to create a new JWT Payload containing
-}
+//}
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
     return next();
@@ -50,7 +53,7 @@ router.get('/verification',
         return res.status(200).send({ auth: true, message: 'Authenticated.' });
 });
 
-router.post('/login', async (req: Request, res: Response) => {
+/*router.post('/login', async (req: Request, res: Response) => {
     const email = req.body.email;
     const password = req.body.password;
     // check email is valid
@@ -80,8 +83,8 @@ router.post('/login', async (req: Request, res: Response) => {
     const jwt = generateJWT(user);
 
     res.status(200).send({ auth: true, token: jwt, user: user.short()});
-});
-
+});*/
+/*
 //register a new user
 router.post('/', async (req: Request, res: Response) => {
     const email = req.body.email;
@@ -121,7 +124,7 @@ router.post('/', async (req: Request, res: Response) => {
     const jwt = generateJWT(savedUser);
 
     res.status(201).send({token: jwt, user: savedUser.short()});
-});
+});*/
 
 router.get('/', async (req: Request, res: Response) => {
     res.send('auth')
